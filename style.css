@@ -586,7 +586,8 @@ html {
 /* 1. Randevu Panelleri (Kart Görünümü & Derinlik) */
 .booking-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 620px);
+  justify-content: center;
   gap: 28px;
   margin-top: 36px;
   align-items: start;
