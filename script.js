@@ -13,8 +13,8 @@ const TRAINER_PASSWORD = (typeof TRAINER_PASS !== "undefined")
 
 // DOM Elementleri
 const bookingDateInput = document.getElementById("bookingDate") || document.querySelector('input[type="date"]');
-const bookingNameInput = document.getElementById("bookingName") || document.getElementById("fullName");
-const bookingForm = document.getElementById("memberNameInput");
+const bookingNameInput = document.getElementById("memberNameInput") || document.getElementById("fullName");
+const bookingForm = document.getElementById("bookingName");
 const timeSlotsContainer = document.getElementById("timeSlots") || document.getElementById("timeSlotsContainer");
 const trainerSlotManager = document.getElementById("trainerSlotManager");
 
