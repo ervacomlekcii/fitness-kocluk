@@ -206,10 +206,10 @@ function toggleSlotBlock(time, currentBlocked) {
 }
 
 // 3. Randevu Talebi Oluşturma
-if (bookingForm) {
-    bookingForm.addEventListener("submit", (e) => {
-        e.preventDefault();
+const createBookingBtn = document.getElementById("createBookingBtn");
 
+if (createBookingBtn) {
+    createBookingBtn.addEventListener("click", () => {
         const name = bookingNameInput ? bookingNameInput.value.trim() : "";
         const date = bookingDateInput ? bookingDateInput.value : "";
 
