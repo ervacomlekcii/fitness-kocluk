@@ -54,8 +54,8 @@ function listenSlotsAndBookings() {
     db.collection("appointments")
       .orderBy("createdAt", "desc")
       .limit(1)
-      .onSnapshot((snapshot) => 
-          if (snapshot.empty)
+      .onSnapshot((snapshot) => {
+          if (snapshot.empty){
             memberStatusCard.classList.add('hidden');
             memberStatusCard.style.display = 'none';
             return;
@@ -99,11 +99,12 @@ function listenSlotsAndBookings() {
               incomingRequestCard.classList.add('hidden');
               emptyRequestMsg.textContent = 'Randevu talebi reddedildi.';
               emptyRequestMsg.classList.remove('hidden');
-          };
+          }
+      });
 
 
-function renderSlots(blockedTimes = []) {
-    timeSlotsContainer.innerHTML = '';
+        function renderSlots(blockedTimes =  []) {
+        timeSlotsContainer.innerHTML = '';
     if (trainerSlotManager) trainerSlotManager.innerHTML = '';
 
     allSlots.forEach(time => {
