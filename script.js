@@ -316,8 +316,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
-const videoModal = document.getElementById("videoModal");
-const closeModalBtn = document.getElementById("closeModalBtn");
 let jitsiApi = null;
 
 function startVideoCall(roomName = "FitCoachCanliGorusme") {
