@@ -316,3 +316,59 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+const videoModal = document.getElementById("videoModal");
+const closeModalBtn = document.getElementById("closeModalBtn");
+let jitsiApi = null;
+
+function startVideoCall(roomName = "FitCoachCanliGorusme") {
+  const container = document.getElementById("jitsiContainer");
+  if (!container) return;
+
+  container.innerHTML = "";
+  if (jitsiApi) {
+    jitsiApi.dispose();
+    jitsiApi = null;
+  }
+
+  if (typeof JitsiMeetExternalAPI === "function") {
+    jitsiApi = new JitsiMeetExternalAPI("meet.jit.si", {
+      roomName: roomName,
+      parentNode: container,
+      width: "100%",
+      height: "100%",
+      configOverwrite: {
+        prejoinPageEnabled: false
+      }
+    });
+  } else {
+    container.innerHTML = "<p style='color:#fff;padding:20px;'>Görüntülü görüşme servisi yüklenemedi.</p>";
+  }
+}
+
+function stopVideoCall() {
+  if (jitsiApi) {
+    jitsiApi.dispose();
+    jitsiApi = null;
+  }
+  const container = document.getElementById("jitsiContainer");
+  if (container) container.innerHTML = "";
+
+  if (videoModal) {
+    videoModal.classList.add("hidden");
+    videoModal.style.display = "none";
+  }
+}
+
+if (joinCallBtn) {
+  joinCallBtn.addEventListener("click", () => {
+    if (videoModal) {
+      videoModal.classList.remove("hidden");
+      videoModal.style.display = "flex";
+    }
+    startVideoCall();
+  });
+}
+
+if (closeModalBtn) {
+  closeModalBtn.addEventListener("click", stopVideoCall);
+}
