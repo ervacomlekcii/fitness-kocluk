@@ -1,0 +1,1150 @@
+html {
+    scroll-behavior: smooth;
+}
+:root{
+    --bg-dark:#0f1115;
+    --bg-darker:#090a0d;
+    --card-bg:#181b22;
+    --text-main:#ffffff;
+    --text-muted:#9ca3af;
+    --accent:#ccff00;;
+    --accent-hover:#b3e600;
+    --border:#2a2f3a;
+} 
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+h1, h2, h3, .logo{
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.container{
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Navbar */
+.navbar{
+    background: rgba(15, 17, 21, 0.95);
+    border-bottom: 1px solid var (--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 16px 0;
+}
+
+.nav-content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo span{
+    color: var(--accent);
+}
+
+.nav-links{
+    display: flex;
+    gap: 24px;
+}
+
+.nav-links a{
+    color: var --text-muted;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.nav-links a:hover{
+    color: var(--accent);
+}
+
+/* Butonlar */
+.btn{
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    font-size: 0.95rem;
+    transition: 0.2s;
+    text-align: center;
+}
+
+.btn-primary{
+    background-color: var(--accent);
+    color: #000;
+}
+
+.btn-primary:hover{
+background-color: var(--accent);
+
+}
+
+.btn-outline{
+    background: transparent;
+    border: 1px solid var(--border);
+    color: #fff;
+}
+
+.btn-outline:hover{
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.btn-success{
+    background-color: #10b981;
+    color: #fff;
+}
+
+.btn-danger{
+    background-color: #ef4444;
+    color: #fff;
+
+}
+
+.full-width{
+    width: 100%;
+}
+
+/* Hero Alanı */
+.hero{
+    padding: 100px 0 80px;
+    background: radial-gradient(circle at top right, rgba(204, 255, 0, 0.12), transparent 50%);
+}
+
+.badge{
+    display: inline-block;
+    background: rgba(204, 255, 0, 0.15);
+    color: var(--accent);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.hero h1{
+    font-size: 3.5rem;
+    line-height: 1.1;
+    margin-bottom: 20px;
+}
+
+.hero h1 span{
+    color: var(--accent);
+}
+
+.hero p{
+    max-width: 600px;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 32px;
+}
+
+.hero-buttons{
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+/* Bölümler ve Kartlar */
+.section{
+    padding: 80px 0;
+}
+
+.bg-darker{
+    background-color: var(--bg-darker);
+}
+
+.section-header{
+    text-align: center;
+    margin-bottom: 50px;
+
+}
+
+.section-header h2{
+    font-size: 2.3rem;
+    margin-bottom: 10px;
+}
+
+.section-header p{
+    color: var(--text-muted);
+}
+
+.grid-3{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr) ;
+    gap: 24px;
+    align-items: stretch; /* Tüm kartların yüksekliğini birbirine eşitler */
+}
+
+.card{
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 24px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.tag{
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: var(--accent);
+    color: #000;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+
+.card h3{
+font-size: 1.5rem;
+margin-bottom: 12px;
+}
+
+.card-desc{
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}
+
+.feature-list{
+    list-style: none;
+    margin-bottom: 28px;
+    flex-grow: 1;
+
+}
+
+.feature-list li{
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+/* Randevu Sistemi */
+.booking-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 768px){
+    .booking-grid{
+        grid-template-columns: 1fr 1fr;
+    }
+    .hero h1{
+        font-size: 2.5rem;
+    }
+}
+
+.panel{
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+
+}
+
+.trainer-panel{
+    border-style: dashed;
+    border-color: #4b5563;
+}
+
+.panel h3{
+    margin-bottom: 16px;
+    color: var(--accent);
+}
+
+.input-label{
+display: block;
+font-size: 0.85rem;
+color: var(--text-muted);
+margin: 14px 0 6px;
+}
+
+.input-field{
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.slot-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.slot-btn{
+    padding: 10px;
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.slot-btn:hover{
+    border-color: var(--accent);
+}
+
+.slot-btn.selected{
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+}
+
+.slot-btn.disabled-slot{
+    opacity: 0.35;
+    text-decoration: line-through;
+}
+
+/* Durum Kutuları */
+.status-box, .request-card{
+    margin-top: 20px;
+    padding: 16px;
+    background: var(--bg-dark);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.status-header, panel-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.status-bedge{
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-bedge.pending{
+    background: rgba(245, 156, 11, 0.2);
+    color: #fbbf24;
+}
+
+.status-bedge.approved{
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+}
+
+.status-bedge.rejected{
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.notif-pill{
+    background: #ef4444;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.divider{
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+
+}
+
+.action-buttons{
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.action-buttons .btn{
+    flex: 1;
+}
+
+.hidden{
+    display: none !important;
+
+}
+
+/* Footer */
+.footer{
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+}
+
+.footer-content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.content-box p{
+    margin-bottom: 10px;
+}
+
+/* Görüntülü Görüşme Modalı */
+.modal{
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal-content{
+    background: var(--card-bg);
+    width: 90%;
+    max-width: 700px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.modal-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    background: var(--bg-darker);
+}
+
+.close-btn{
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.video-area{
+    height: 360px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #111318;
+}
+
+.main-video{
+    text-align: center;
+}
+
+.avatar-circle{
+    width: 90px;
+    height: 90px;
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+}
+
+.self-video{
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 130px;
+    height: 90px;
+    background: #262b36;
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+
+}
+
+/* Görüntülü Görüşme Modal Stilleri */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 750px;
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+}
+
+.close-btn {
+  background-color: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.video-area {
+  position: relative;
+  background-color: #090a0d;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  height: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar-circle {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 800;
+}
+
+.self-video {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 150px;
+  height: 100px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* =========================================
+   ESTETİK RANDEVU & İLETİŞİM GÜNCELLEMESİ
+   ========================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* 1. Randevu Panelleri (Kart Görünümü & Derinlik) */
+.booking-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 36px;
+  align-items: start;
+}
+
+.panel-box {
+  background: linear-gradient(145deg, #181b22, #12141a);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.panel-box:hover {
+  border-color: rgba(204, 255, 0, 0.35);
+}
+
+.panel-box h3 {
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--text-main);
+}
+
+.panel-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.panel-title-row h3 {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* 2. Koyu Tema Form Kutuları */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #0b0d11;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(204, 255, 0, 0.15);
+}
+
+/* Takvim ikonunu koyu temada beyaz görünür yap */
+.form-group input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+/* 3. Modern Saat Butonları */
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.slot-btn {
+  padding: 10px 12px;
+  background-color: #0b0d11;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: var(--text-main);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slot-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.slot-btn.selected {
+  background-color: var(--accent);
+  color: #000000;
+  border-color: var(--accent);
+  box-shadow: 0 4px 14px rgba(204, 255, 0, 0.35);
+}
+
+.slot-btn.disabled-slot {
+  opacity: 0.35;
+  text-decoration: line-through;
+  background-color: #090a0d;
+}
+
+/* 4. Durum Kartları & Bildirim Rozetleri */
+.divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 22px 0;
+}
+
+.empty-state {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 18px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.status-card,
+.request-card {
+  margin-top: 20px;
+  background-color: #0b0d11;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.status-badge,
+.notif-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.status-badge.pending,
+.notif-badge {
+  background-color: rgba(234, 179, 8, 0.18);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.35);
+}
+
+.status-badge.approved {
+  background-color: rgba(34, 197, 94, 0.18);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.status-badge.rejected {
+  background-color: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn-success {
+  background-color: #22c55e;
+  color: #000;
+  font-weight: 700;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* 5. İletişim (Footer) Bölümü Estetik Düzeni */
+.footer {
+  background: linear-gradient(180deg, #090a0d 0%, #050608 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 50px 0 40px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.footer .logo {
+  display: inline-block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.footer p {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.contac-box {
+  background-color: #12141a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 20px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contac-box a {
+  display: inline-block;
+  background-color: #25d366;
+  color: #000000;
+  font-weight: 700;
+  text-align: center;
+  padding: 11px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.contac-box a:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+/* Mobil Uyumluluk */
+@media (max-width: 768px) {
+  .booking-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Sağ panelin içeriden yatay bölünmesini engelle */
+.booking-grid .panel-box {
+  display: block !important;
+  width: 100%;
+}
+
+/* Butonun üstündeki boşluğu dengele */
+#createBookingBtn {
+  margin-top: 8px;
+}
+
+/* Sağ panelin içindeki tüm sınıfların yatay bölünmesini engelle */
+.booking-grid > div {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Sağ panelin içindeki tüm kapsayıcıları dikey hizaya al */
+.booking-grid > div,
+.booking-grid > div > div:not(.slots-grid):not(.action-buttons) {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+.booking-grid > div .panel-title-row {
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+/* =========================================
+   EĞİTMEN GİRİŞİ & TEK PANEL ORTALAMA
+   ========================================= */
+
+.hidden {
+  display: none !important;
+}
+
+/* Üst menüdeki Eğitmen Girişi butonu */
+.btn-outline-sm {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: var(--text-muted);
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-sm:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Eğitmen paneli gizliyken üye panelini ortala */
+.booking-grid.single-view {
+  grid-template-columns: 1fr;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Gizli sınıfının her zaman öncelikli olmasını sağla */
+.booking-grid > div.hidden,
+.hidden {
+  display: none !important;
+}
+
+/* Gizli eğitmen panelinin ezilmesini engelle */
+#trainerPanelBox.hidden {
+  display: none !important;
+}
+
+/* =========================================
+   GÖRÜNTÜLÜ GÖRÜŞME MODAL DÜZELTMESİ
+   ========================================= */
+
+#videoModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 6, 8, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+#videoModal.hidden {
+  display: none !important;
+}
+
+#videoModal .modal-content {
+  background: #12141a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 720px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+}
+
+#videoModal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#videoModal .video-area,
+#videoModal .video-screen {
+  position: relative;
+  width: 100%;
+  height: 360px;
+  background: radial-gradient(circle at center, #1c2230 0%, #0b0d12 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  padding: 20px;
+}
+
+/* Sağ alt köşedeki küçük "Sen (Üye)" kamera kutusu */
+#videoModal .self-cam,
+#videoModal .user-video {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 140px;
+  height: 95px;
+  background: #181c26;
+  border: 1px solid rgba(204, 255, 0, 0.45);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+/* =========================================
+   GÖRÜNTÜLÜ GÖRÜŞME MODAL KESİN DÜZELTME
+   ========================================= */
+
+#videoModal {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(5, 6, 8, 0.9) !important;
+  z-index: 99999 !important;
+}
+
+#videoModal.hidden {
+  display: none !important;
+}
+
+#videoModal .modal-content {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 90% !important;
+  max-width: 720px !important;
+  background: #12141a !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 18px !important;
+  padding: 24px !important;
+  gap: 18px !important;
+}
+
+#videoModal .modal-header {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  padding-bottom: 14px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+#videoModal .modal-content > div:last-child {
+  position: relative !important;
+  width: 100% !important;
+  height: 360px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+/* Üst başlık kutusu ile kamera ekranını aynı genişlikte hizala */
+#videoModal .modal-content,
+#videoModal > div:last-child {
+  width: 90% !important;
+  max-width: 720px !important;
+  margin: 0 auto !important;
+}
+
+/* Eğitmen paneli gizliyken randevu kutusunu tam ortala */
+.booking-grid.single-view {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.booking-grid.single-view .panel-box {
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  header,
+  nav,
+  .navbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  header .logo,
+  header .brand,
+  header a:first-child {
+    color: #ffffff !important;
+    white-space: nowrap;
+  }
+
+  nav a,
+  .nav-links a {
+    color: #f3f4f6 !important;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .nav-actions,
+  .header-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .nav-actions button,
+  .nav-actions a,
+  .header-buttons button,
+  .header-buttons a,
+  header button,
+  header a[class*="btn"],
+  header .btn {
+    padding: 8px 10px !important;
+    font-size: 12px !important;
+    line-height: 1.15 !important;
+    white-space: nowrap !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+
+
+    /* Hero alanındaki yarıda kesilen arka plan/görsel kutusunu tam genişlik yap */
+    .hero-visual, .hero-image, .hero-card {
+        width: 100%;
+        max-width: 100%;
+    }
+
+
+
+
+
+
