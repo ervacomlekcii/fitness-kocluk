@@ -1,313 +1,318 @@
-// Firebase Yapılandırması (Senin Projen)
-const firebaseConfig = {
-    apiKey: "AIzaSyBQ1INh0k_HwRgbaeShfzYCnWEYoOZQraU",
-    authDomain: "fitees-randevu.firebaseapp.com",
-    projectId: "fitees-randevu",
-    storageBucket: "fitees-randevu.firebasestorage.app",
-    messagingSenderId: "585183080466",
-    appId: "1:585183080466:web:3f9400efdd524209f728cb"
-};
+// Varsayılan randevu saatleri (index.html veya üst kısımda tanımlı değilse kullanılır)
+const defaultSlots = [
+    "09:00", "10:00", "11:00", "12:00",
+    "14:00", "15:00", "16:00", "17:00", "18:00"
+];
+const slotsList = (typeof allSlots !== "undefined" && Array.isArray(allSlots))
+    ? allSlots
+    : defaultSlots;
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const TRAINER_PASSWORD = (typeof TRAINER_PASS !== "undefined")
+    ? TRAINER_PASS
+    : "1234";
 
-// Saat Listesi
-const allSlots = ["09:00", "10:30", "13:00", "15:00", "17:30"];
-let selectedTime = null;
-let currentAppointmentId = null;
+// DOM Elementleri
+const bookingDateInput = document.getElementById("bookingDate") || document.querySelector('input[type="date"]');
+const bookingNameInput = document.getElementById("bookingName") || document.getElementById("fullName");
+const bookingForm = document.getElementById("bookingForm");
+const timeSlotsContainer = document.getElementById("timeSlots") || document.getElementById("timeSlotsContainer");
+const trainerSlotManager = document.getElementById("trainerSlotManager");
 
-// HTML Elementleri
-const timeSlotsContainer = document.getElementById('timeSlotsContainer');
-const trainerSlotManager = document.getElementById('trainerSlotManager');
-const bookingDateInput = document.getElementById('bookingDateInput');
-const memberNameInput = document.getElementById('memberNameInput');
-const createBookingBtn = document.getElementById('createBookingBtn');
+const memberStatusCard = document.getElementById("memberStatusCard");
+const statusBadge = document.getElementById("statusBadge");
+const statusDetails = document.getElementById("statusDetails");
+const joinCallBtn = document.getElementById("joinCallBtn");
 
-// Durum & Bildirim Elementleri
-const memberStatusCard = document.getElementById('memberStatusCard');
-const statusBadge = document.getElementById('statusBadge');
-const statusDetails = document.getElementById('statusDetails');
-const joinCallBtn = document.getElementById('joinCallBtn');
+const notifBadge = document.getElementById("notifBadge");
+const emptyRequestMsg = document.getElementById("emptyRequestMsg");
+const incomingRequestCard = document.getElementById("incomingRequestCard");
+const requestInfo = document.getElementById("requestInfo");
+const approveBtn = document.getElementById("approveBtn");
+const rejectBtn = document.getElementById("rejectBtn");
 
-const notifBadge = document.getElementById('notifBadge');
-const emptyRequestMsg = document.getElementById('emptyRequestMsg');
-const incomingRequestCard = document.getElementById('incomingRequestCard');
-const requestInfo = document.getElementById('requestInfo');
-const approveBtn = document.getElementById('approveBtn');
-const rejectBtn = document.getElementById('rejectBtn');
+const trainerLoginBtn = document.getElementById("trainerLoginBtn");
+const trainerPanelBox = document.getElementById("trainerPanelBox");
+const bookingGrid = document.getElementById("bookingGrid");
 
 // Görüntülü Görüşme Modal Elementleri
-const videoModal = document.getElementById('videoModal');
-const closeModalBtn = document.getElementById('closeModalBtn');
+const videoModal = document.getElementById("videoModal");
+const closeModalBtn = document.getElementById("closeModalBtn");
 
-bookingDateInput.valueAsDate = new Date();
+let selectedTime = null;
+let currentAppointmentId = null;
+let isTrainerLoggedIn = false;
+let unsubscribeBlocked = null;
+let unsubscribeAppointments = null;
 
-// 1. Saatleri Veritabanından Canlı Dinle ve Çiz
+// Başlangıç tarihi ayarla
+if (bookingDateInput && !bookingDateInput.value) {
+    bookingDateInput.valueAsDate = new Date();
+}
+
+// 1. Saatleri Veritabanından Canlı Dinle ve Randevu Durumlarını Takip Et
 function listenSlotsAndBookings() {
+    if (!bookingDateInput) return;
     const selectedDate = bookingDateInput.value;
+    selectedTime = null;
 
-    db.collection("blockedSlots").doc(selectedDate).onSnapshot((doc) => {
-        const blocked = doc.exists ? (doc.data().times || []) : [];
-        renderSlots(blocked);
-    });
+    if (typeof unsubscribeBlocked === "function") {
+        unsubscribeBlocked();
+    }
+    if (typeof unsubscribeAppointments === "function") {
+        unsubscribeAppointments();
+    }
 
-    db.collection("appointments")
-      .orderBy("createdAt", "desc")
-      .limit(1)
-      .onSnapshot((snapshot) => {
-          if (snapshot.empty){
-            memberStatusCard.classList.add('hidden');
-            memberStatusCard.style.display = 'none';
-            return;
-        }
-          const doc = snapshot.docs[0];
-          const data = doc.data();
-          currentAppointmentId = doc.id;
+    if (selectedDate && typeof db !== "undefined") {
+        unsubscribeBlocked = db.collection("blockedSlots")
+            .doc(selectedDate)
+            .onSnapshot((doc) => {
+                const blocked = doc.exists ? (doc.data().times || []) : [];
+                renderSlots(blocked);
+            });
+    } else {
+        renderSlots([]);
+    }
 
-          memberStatusCard.classList.remove('hidden');
-          memberStatusCard.style.display = 'block';
+    if (typeof db !== "undefined") {
+        unsubscribeAppointments = db.collection("appointments")
+            .orderBy("createdAt", "desc")
+            .limit(1)
+            .onSnapshot((snapshot) => {
+                if (snapshot.empty) {
+                    if (memberStatusCard) {
+                        memberStatusCard.classList.add("hidden");
+                        memberStatusCard.style.display = "none";
+                    }
+                    if (notifBadge) notifBadge.classList.add("hidden");
+                    if (incomingRequestCard) incomingRequestCard.classList.add("hidden");
+                    if (emptyRequestMsg) {
+                        emptyRequestMsg.textContent = "Henüz bekleyen randevu talebi yok.";
+                        emptyRequestMsg.classList.remove("hidden");
+                    }
+                    return;
+                }
 
+                const doc = snapshot.docs[0];
+                const data = doc.data();
+                currentAppointmentId = doc.id;
 
-          memberStatusCard.classList.remove('hidden');
-          if (data.status === 'pending') {
-              statusBadge.className = 'status-badge pending';
-              statusBadge.textContent = 'Onay Bekleniyor';
-              statusDetails.textContent = `${data.date} tarihinde saat ${data.time} için talebiniz eğitmene iletildi.`;
-              joinCallBtn.classList.add('hidden');
+                if (memberStatusCard) {
+                    memberStatusCard.classList.remove("hidden");
+                    memberStatusCard.style.display = "block";
+                }
 
-              notifBadge.classList.remove('hidden');
-              emptyRequestMsg.classList.add('hidden');
-              incomingRequestCard.classList.remove('hidden');
-              requestInfo.innerHTML = `<strong>${data.name}</strong> adlı üye <strong>${data.date}</strong> günü saat <strong>${data.time}</strong> için ön görüşme talep ediyor.`;
-          } else if (data.status === 'approved') {
-              statusBadge.className = 'status-badge approved';
-              statusBadge.textContent = 'Onaylandı ✓';
-              statusDetails.textContent = `Randevunuz eğitmen tarafından onaylandı! Görüşme saati: ${data.date} - ${data.time}`;
-              joinCallBtn.classList.remove('hidden');
+                if (data.status === "pending") {
+                    if (statusBadge) {
+                        statusBadge.className = "status-badge pending";
+                        statusBadge.textContent = "Onay Bekleniyor";
+                    }
+                    if (statusDetails) {
+                        statusDetails.textContent = `${data.date} tarihinde saat ${data.time} için talebiniz eğitmene iletildi.`;
+                    }
+                    if (joinCallBtn) joinCallBtn.classList.add("hidden");
 
-              notifBadge.classList.add('hidden');
-              incomingRequestCard.classList.add('hidden');
-              emptyRequestMsg.textContent = 'Son randevu onaylandı.';
-              emptyRequestMsg.classList.remove('hidden');
-          } else if (data.status === 'rejected') {
-              statusBadge.className = 'status-badge rejected';
-              statusBadge.textContent = 'Müsait Değil ✕';
-              statusDetails.textContent = 'Seçtiğiniz saat şu an uygun değil. Lütfen farklı bir saat seçin veya WhatsApp üzerinden ulaşın.';
-              joinCallBtn.classList.add('hidden');
+                    if (notifBadge) notifBadge.classList.remove("hidden");
+                    if (emptyRequestMsg) emptyRequestMsg.classList.add("hidden");
+                    if (incomingRequestCard) incomingRequestCard.classList.remove("hidden");
+                    if (requestInfo) {
+                        requestInfo.innerHTML = `<strong>${data.name || "Üye"}</strong> adlı üye <strong>${data.date}</strong> günü saat <strong>${data.time}</strong> için ön görüşme talep ediyor.`;
+                    }
+                } else if (data.status === "approved") {
+                    if (statusBadge) {
+                        statusBadge.className = "status-badge approved";
+                        statusBadge.textContent = "Onaylandı";
+                    }
+                    if (statusDetails) {
+                        statusDetails.textContent = `Randevunuz eğitmen tarafından onaylandı! Görüşme saati: ${data.date} - ${data.time}`;
+                    }
+                    if (joinCallBtn) joinCallBtn.classList.remove("hidden");
 
-              notifBadge.classList.add('hidden');
-              incomingRequestCard.classList.add('hidden');
-              emptyRequestMsg.textContent = 'Randevu talebi reddedildi.';
-              emptyRequestMsg.classList.remove('hidden');
-          }
-      });
+                    if (notifBadge) notifBadge.classList.add("hidden");
+                    if (incomingRequestCard) incomingRequestCard.classList.add("hidden");
+                    if (emptyRequestMsg) {
+                        emptyRequestMsg.textContent = "Son randevu onaylandı.";
+                        emptyRequestMsg.classList.remove("hidden");
+                    }
+                } else if (data.status === "rejected") {
+                    if (statusBadge) {
+                        statusBadge.className = "status-badge rejected";
+                        statusBadge.textContent = "Müsait Değil";
+                    }
+                    if (statusDetails) {
+                        statusDetails.textContent = "Seçtiğiniz saat şu an uygun değil. Lütfen farklı bir saat seçin veya WhatsApp üzerinden iletişime geçin.";
+                    }
+                    if (joinCallBtn) joinCallBtn.classList.add("hidden");
 
+                    if (notifBadge) notifBadge.classList.add("hidden");
+                    if (incomingRequestCard) incomingRequestCard.classList.add("hidden");
+                    if (emptyRequestMsg) {
+                        emptyRequestMsg.textContent = "Randevu talebi reddedildi.";
+                        emptyRequestMsg.classList.remove("hidden");
+                    }
+                }
+            });
+    }
+}
 
-        function renderSlots(blockedTimes =  []) {
-        timeSlotsContainer.innerHTML = '';
-    if (trainerSlotManager) trainerSlotManager.innerHTML = '';
+// 2. Saat Butonlarını Ekrana Bas
+function renderSlots(blockedTimes = []) {
+    if (timeSlotsContainer) {
+        timeSlotsContainer.innerHTML = "";
+    }
+    if (trainerSlotManager) {
+        trainerSlotManager.innerHTML = "";
+    }
 
-    allSlots.forEach(time => {
+    slotsList.forEach((time) => {
         const isBlocked = blockedTimes.includes(time);
 
-        const btn = document.createElement('button');
-        btn.className = `slot-btn ${isBlocked ? 'disabled' : ''} ${selectedTime === time ? 'selected' : ''}`;
-        btn.textContent = isBlocked ? `${time} (Dolu)` : time;
-        btn.disabled = isBlocked;
-        btn.onclick = () => {
-            selectedTime = time;
-            renderSlots(blockedTimes);
-        };
-        timeSlotsContainer.appendChild(btn);
+        if (timeSlotsContainer) {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = `slot-btn ${isBlocked ? "disabled" : ""} ${selectedTime === time ? "selected" : ""}`;
+            btn.textContent = isBlocked ? `${time} (Dolu)` : time;
+            btn.disabled = isBlocked;
+
+            btn.addEventListener("click", () => {
+                selectedTime = time;
+                renderSlots(blockedTimes);
+            });
+
+            timeSlotsContainer.appendChild(btn);
+        }
 
         if (trainerSlotManager) {
-            const tBtn = document.createElement('button');
-            tBtn.className = `slot-btn ${isBlocked ? 'disabled' : 'selected'}`;
-            tBtn.textContent = isBlocked ? `${time} (Kapalı)` : `${time} (Açık)`;
-            tBtn.onclick = () => {
-                const selectedDate = bookingDateInput.value;
-                const updated = isBlocked
-                    ? blockedTimes.filter(t => t !== time)
-                    : [...blockedTimes, time];
-                db.collection("blockedSlots").doc(selectedDate).set({ times: updated });
-            };
-            trainerSlotManager.appendChild(tBtn);
+            const manageBtn = document.createElement("button");
+            manageBtn.type = "button";
+            manageBtn.className = `slot-btn ${isBlocked ? "blocked" : ""}`;
+            manageBtn.textContent = isBlocked ? `${time} (Kapalı)` : `${time} (Açık)`;
+            manageBtn.addEventListener("click", () => toggleSlotBlock(time, blockedTimes));
+            trainerSlotManager.appendChild(manageBtn);
         }
     });
 }
 
-bookingDateInput.addEventListener('change', () => {
-    selectedTime = null;
-    listenSlotsAndBookings();
-});
+// Eğitmen panelinden saat açma/kapatma
+function toggleSlotBlock(time, currentBlocked) {
+    if (!bookingDateInput || typeof db === "undefined") return;
+    const dateKey = bookingDateInput.value;
+    if (!dateKey) return;
 
-createBookingBtn.onclick = () => {
-    const kvkkCheck = document.getElementById('kvkkCheck');
-const paymentPrivacyCheck = document.getElementById('paymentPrivacyCheck');
+    const updated = currentBlocked.includes(time)
+        ? currentBlocked.filter((t) => t !== time)
+        : [...currentBlocked, time];
 
-if (!kvkkCheck.checked || !paymentPrivacyCheck.checked) {
-    alert('Devam etmek için lütfen Gizlilik, KVKK ve Kart Güvenliği koşullarını okuyup onaylayın.');
-    return;
+    db.collection("blockedSlots").doc(dateKey).set({ times: updated }, { merge: true });
 }
-    const name = memberNameInput.value.trim();
-    const date = bookingDateInput.value;
 
-    if (!name || !date || !selectedTime) {
-        alert('Lütfen adınızı girin, tarih ve saat seçin.');
-        return;
-    }
-
-    db.collection("appointments").add({
-        name: name,
-        date: date,
-        time: selectedTime,
-        status: 'pending',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-};
-
-approveBtn.onclick = () => {
-    if (!currentAppointmentId) return;
-    db.collection("appointments").doc(currentAppointmentId).update({
-        status: 'approved'
-    });
-};
-
-rejectBtn.onclick = () => {
-    if (!currentAppointmentId) return;
-    db.collection("appointments").doc(currentAppointmentId).update({
-        status: 'rejected'
-    });
-};
-
-// Gerçek Jitsi Meet Görüntülü Görüşme
-let jitsiApi = null;
-
-joinCallBtn.onclick = () => {
-    videoModal.classList.remove('hidden');
-    const container = document.getElementById('jitsiContainer');
-    container.innerHTML = '';
-
-    const memberName = memberNameInput.value.trim() || 'Danışan';
-    const date = bookingDateInput.value || 'Bugun';
-    const time = selectedTime ? selectedTime.replace(':', '') : 'Gorusme';
-    const roomName = `OnlineFitnessKocluk_${date}_${time}`;
-
-    jitsiApi = new JitsiMeetExternalAPI('meet.jit.si', {
-        roomName: roomName,
-        width: '100%',
-        height: '100%',
-        parentNode: container,
-        userInfo: { displayName: memberName },
-        configOverwrite: {
-            startWithAudioMuted: false,
-            startWithVideoMuted: false,
-            prejoinPageEnabled: false
-        }
-    });
-};
-
-closeModalBtn.onclick = () => {
-    if (jitsiApi) {
-        jitsiApi.dispose();
-        jitsiApi = null;
-    }
-    videoModal.classList.add('hidden');
-};
-
-listenSlotsAndBookings();
-
-// =========================================
-// EĞİTMEN GİRİŞİ VE KİLİT MEKANİZMASI
-// =========================================
-// Koşullar Modal Kontrolleri
-const legalModal = document.getElementById('legalModal');
-const openLegalModalBtn = document.getElementById('openLegalModalBtn');
-const closeLegalModalBtn = document.getElementById('closeLegalModalBtn');
-const acceptLegalBtn = document.getElementById('acceptLegalBtn');
-
-if (openLegalModalBtn) {
-    openLegalModalBtn.onclick = (e) => {
+// 3. Randevu Talebi Oluşturma
+if (bookingForm) {
+    bookingForm.addEventListener("submit", (e) => {
         e.preventDefault();
-        legalModal.classList.remove('hidden');
-    };
-}
-if (closeLegalModalBtn) {
-    closeLegalModalBtn.onclick = () => legalModal.classList.add('hidden');
-}
-if (acceptLegalBtn) {
-    acceptLegalBtn.onclick = () => {
-        document.getElementById('kvkkCheck').checked = true;
-        document.getElementById('paymentPrivacyCheck').checked = true;
-        legalModal.classList.add('hidden');
-    };
-}
 
-// Eğitmen İçin Site İçi Canlı Görüşme Başlatma
-const trainerJoinCallBtn = document.getElementById('trainerJoinCallBtn');
-if (trainerJoinCallBtn) {
-    db.collection("appointments").orderBy("createdAt", "desc").limit(1).onSnapshot((snap) => {
-        if (!snap.empty && snap.docs[0].data().status === 'approved') {
-            const d = snap.docs[0].data();
-            trainerJoinCallBtn.classList.remove('hidden');
-            trainerJoinCallBtn.onclick = () => {
-                videoModal.classList.remove('hidden');
-                const container = document.getElementById('jitsiContainer');
-                container.innerHTML = '';
-                const roomName = `OnlineFitnessKocluk_${d.date}_${d.time.replace(':', '')}`;
-                jitsiApi = new JitsiMeetExternalAPI('meet.jit.si', {
-                    roomName: roomName,
-                    width: '100%',
-                    height: '100%',
-                    parentNode: container,
-                    userInfo: { displayName: 'Eğitmen' },
-                    configOverwrite: { startWithAudioMuted: false, startWithVideoMuted: false, prejoinPageEnabled: false }
-                });
-            };
-        } else {
-            trainerJoinCallBtn.classList.add('hidden');
+        const name = bookingNameInput ? bookingNameInput.value.trim() : "";
+        const date = bookingDateInput ? bookingDateInput.value : "";
+
+        if (!name) {
+            alert("Lütfen adınızı ve soyadınızı girin.");
+            return;
         }
+        if (!date) {
+            alert("Lütfen bir tarih seçin.");
+            return;
+        }
+        if (!selectedTime) {
+            alert("Lütfen müsait saatlerden birini seçin.");
+            return;
+        }
+
+        db.collection("appointments").add({
+            name: name,
+            date: date,
+            time: selectedTime,
+            status: "pending",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            alert("Randevu talebiniz alındı, eğitmen onayı bekleniyor.");
+        }).catch((err) => {
+            console.error("Randevu kaydı hatası:", err);
+            alert("Randevu gönderilirken bir hata oluştu.");
+        });
     });
 }
+
+// 4. Eğitmen Onay / Red İşlemleri
+if (approveBtn) {
+    approveBtn.addEventListener("click", () => {
+        if (!currentAppointmentId) return;
+        db.collection("appointments").doc(currentAppointmentId).update({
+            status: "approved"
+        });
+    });
+}
+
+if (rejectBtn) {
+    rejectBtn.addEventListener("click", () => {
+        if (!currentAppointmentId) return;
+        db.collection("appointments").doc(currentAppointmentId).update({
+            status: "rejected"
+        });
+    });
+}
+
+// 5. Görüntülü Görüşme Modalı
+if (joinCallBtn && videoModal) {
+    joinCallBtn.addEventListener("click", () => {
+        videoModal.classList.remove("hidden");
+        videoModal.style.display = "flex";
+    });
+}
+
+if (closeModalBtn && videoModal) {
+    closeModalBtn.addEventListener("click", () => {
+        videoModal.classList.add("hidden");
+        videoModal.style.display = "none";
+    });
+}
+
+// 6. Sayfa Yüklendiğinde ve Tarih Değiştiğinde Dinleyicileri Başlat
 document.addEventListener("DOMContentLoaded", () => {
-  const trainerLoginBtn = document.getElementById("trainerLoginBtn");
-  const trainerPanelBox = document.getElementById("trainerPanelBox");
-  const bookingGrid = document.querySelector(".booking-grid");
+    listenSlotsAndBookings();
 
-  // Başlangıçta eğitmen panelini gizle ve üye ekranını ortala
-  if (trainerPanelBox && bookingGrid) {
-    trainerPanelBox.classList.add("hidden");
-    bookingGrid.classList.add("single-view");
-  }
+    if (bookingDateInput) {
+        bookingDateInput.addEventListener("change", () => {
+            listenSlotsAndBookings();
+        });
+    }
 
-  let isTrainerLoggedIn = false;
-  const TRAINER_PASS = "1234"; // Arkadaşının kullanacağı giriş şifresi
+    if (trainerLoginBtn && trainerPanelBox) {
+        trainerLoginBtn.addEventListener("click", () => {
+            if (!isTrainerLoggedIn) {
+                const enteredPass = prompt("Eğitmen paneli şifresini girin:");
+                if (enteredPass === TRAINER_PASSWORD) {
+                    isTrainerLoggedIn = true;
+                    trainerPanelBox.classList.remove("hidden");
+                    if (bookingGrid) bookingGrid.classList.remove("single-view");
+                    trainerLoginBtn.textContent = "Eğitmen Çıkışı";
+                    trainerLoginBtn.style.borderColor = "#ef4444";
+                    trainerLoginBtn.style.color = "#ef4444";
 
-  if (trainerLoginBtn && trainerPanelBox && bookingGrid) {
-    trainerLoginBtn.addEventListener("click", () => {
-      if (!isTrainerLoggedIn) {
-        const enteredPass = prompt("Eğitmen Kontrol Paneli Şifresini Girin:");
-        if (enteredPass === TRAINER_PASS) {
-          isTrainerLoggedIn = true;
-          trainerPanelBox.classList.remove("hidden");
-          bookingGrid.classList.remove("single-view");
-          trainerLoginBtn.textContent = "Eğitmen Çıkışı";
-          trainerLoginBtn.style.borderColor = "#ef4444";
-          trainerLoginBtn.style.color = "#ef4444";
-          // Sayfayı panelin olduğu bölüme kaydır
-          document.getElementById("randevu").scrollIntoView({ behavior: "smooth" });
-        } else if (enteredPass !== null) {
-          alert("Hatalı şifre! Bu alana yalnızca yetkili eğitmen erişebilir.");
-        }
-      } else {
-        // Çıkış yapıldığında paneli tekrar gizle
-        isTrainerLoggedIn = false;
-        trainerPanelBox.classList.add("hidden");
-        bookingGrid.classList.add("single-view");
-        trainerLoginBtn.textContent = "Eğitmen Girişi";
-        trainerLoginBtn.style.borderColor = "";
-        trainerLoginBtn.style.color = "";
-      }
-    });
-  }
+                    const panelEl = document.getElementById("randevu") || trainerPanelBox;
+                    if (panelEl) {
+                        panelEl.scrollIntoView({ behavior: "smooth" });
+                    }
+                } else if (enteredPass !== null) {
+                    alert("Hatalı şifre! Bu alana yalnızca yetkili eğitmen erişebilir.");
+                }
+            } else {
+                // Çıkış yapıldığında paneli tekrar gizle
+                isTrainerLoggedIn = false;
+                trainerPanelBox.classList.add("hidden");
+                if (bookingGrid) bookingGrid.classList.add("single-view");
+                trainerLoginBtn.textContent = "Eğitmen Girişi";
+                trainerLoginBtn.style.borderColor = "";
+                trainerLoginBtn.style.color = "";
+            }
+        });
+    }
 });
