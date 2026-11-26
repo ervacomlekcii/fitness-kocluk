@@ -2,7 +2,7 @@
 
 Birebir çevrimiçi fitness koçluğu hizmetleri sunan; program tanıtımlarını, randevu talep akışını ve kullanıcı etkileşimlerini bir araya getiren duyarlı web uygulaması.
 
-🔗 **Canlı Site:** https://fitness-kocluk.netlify.app
+* **Canlı Site:** https://ervacomlekcii.github.io/fitness-kocluk/
 
 ## Öne Çıkan Özellikler
 * **Birebir Koçluk ve Program Sunumu:** Kişiye özel antrenman planlaması, beslenme alışkanlıkları ve canlı takip süreçlerini tanıtan bölümler.
