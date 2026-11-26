@@ -54,6 +54,7 @@ function listenSlotsAndBookings() {
     if (!bookingDateInput) return;
     const selectedDate = bookingDateInput.value;
     selectedTime = null;
+    renderSlots([]);
 
     if (typeof unsubscribeBlocked === "function") {
         unsubscribeBlocked();
@@ -62,15 +63,17 @@ function listenSlotsAndBookings() {
         unsubscribeAppointments();
     }
 
+
     if (selectedDate && typeof db !== "undefined") {
         unsubscribeBlocked = db.collection("blockedSlots")
             .doc(selectedDate)
             .onSnapshot((doc) => {
                 const blocked = doc.exists ? (doc.data().times || []) : [];
                 renderSlots(blocked);
+            }, (error) => {
+                console.warn("Saatler okunamadı, varsayılan gösteriliyor:", error);
+                renderSlots([]);
             });
-    } else {
-        renderSlots([]);
     }
 
     if (typeof db !== "undefined") {
